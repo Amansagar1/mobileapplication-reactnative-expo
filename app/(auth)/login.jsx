@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Button, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Login() {
   const router = useRouter();
@@ -11,24 +12,26 @@ export default function Login() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleLogin = () => {
-    setError('');
-    if (!userName || !password) {
-      setError('Please fill in all fields.');
-      return;
-    }
+  const handleLogin = async () => {
+  setError('');
+  if (!userName || !password) {
+    setError('Please fill in all fields.');
+    return;
+  }
 
-    // TODO: Replace with real login logic
-    if (userName === 'admin' && password === '123456') {
-      setSuccessMessage('Login successful!');
-      setTimeout(() => {
-        setSuccessMessage('');
-        router.replace('/'); 
-      }, 1500);
-    } else {
-      setError('Invalid credentials. Please try again.');
-    }
-  };
+if (userName === 'admin' && password === '123456') {
+  await SecureStore.setItemAsync('token', 'sample-token');
+  setSuccessMessage('Login successful!');
+  setTimeout(() => {
+    setSuccessMessage('');
+    router.replace('/(tabs)'); // Go to home screen
+  }, 1500);
+}
+
+  else {
+    setError('Invalid credentials. Please try again.');
+  }
+};
 
   return (
     <View className="flex-1 justify-center items-center bg-blue-100 px-6">
@@ -36,7 +39,7 @@ export default function Login() {
         {/* Logo */}
         <View className="items-center mb-6">
           <Image
-            source={require('../assets/images/icon.png')}
+            source={require('../../assets/images/icon.png')}
             className="w-24 h-24"
             resizeMode="contain"
           />
@@ -103,3 +106,50 @@ export default function Login() {
     </View>
   );
 }
+// import { View, Text, TextInput, Pressable } from 'react-native';
+// import { useState } from 'react';
+// import { useRouter } from 'expo-router';
+// import * as SecureStore from 'expo-secure-store';
+
+// export default function LoginScreen() {
+//   const [username, setUsername] = useState('');
+//   const [password, setPassword] = useState('');
+//   const [error, setError] = useState('');
+//   const router = useRouter();
+
+//   const handleLogin = async () => {
+//     if (username === 'admin' && password === '123456') {
+//       await SecureStore.setItemAsync('token', 'fake-token-123');
+//       router.replace('/');
+//     } else {
+//       setError('Invalid credentials');
+//     }
+//   };
+
+//   return (
+//     <View className="flex-1 justify-center items-center bg-white px-6">
+//       <Text className="text-2xl font-bold mb-6">Login</Text>
+
+//       <TextInput
+//         placeholder="Username"
+//         value={username}
+//         onChangeText={setUsername}
+//         className="border w-full mb-4 p-3 rounded"
+//       />
+
+//       <TextInput
+//         placeholder="Password"
+//         value={password}
+//         onChangeText={setPassword}
+//         secureTextEntry
+//         className="border w-full mb-4 p-3 rounded"
+//       />
+
+//       <Pressable onPress={handleLogin} className="bg-green-500 w-full py-3 rounded">
+//         <Text className="text-white text-center">Login</Text>
+//       </Pressable>
+
+//       {error && <Text className="text-red-500 mt-4">{error}</Text>}
+//     </View>
+//   );
+// }
