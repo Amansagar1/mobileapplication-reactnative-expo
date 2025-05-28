@@ -52,44 +52,70 @@ import "../global.css"
 //   );
 // }
 // app/_layout.js
-import { Slot, useRouter, useSegments } from 'expo-router';
-import { useEffect, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
+// app/_layout.js or wherever your RootLayout is defined
 
-export default function RootLayout() {
-  const [isAuthResolved, setIsAuthResolved] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+import { Slot, useRouter, useSegments } from 'expo-router';
+import { useEffect } from 'react';
+import { AuthProvider, useAuth } from '../utils/auth-context';
+
+// Auth-aware navigation guard
+function RootNavigationGuard() {
+  const { isLoggedIn, isAuthResolved } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      const token = await SecureStore.getItemAsync('token');
-      setIsLoggedIn(!!token);
-      setIsAuthResolved(true);
-    };
+    // Don't navigate until auth status is resolved
+    if (!isAuthResolved) {
+      return;
+    }
 
-    checkLoginStatus();
-  }, []);
+    const inAuthGroup = segments[0] === '(auth)';
+    const inTabsGroup = segments[0] === '(tabs)';
 
-  useEffect(() => {
-  if (!isAuthResolved) return;
+    console.log('Navigation Guard:', {
+      isLoggedIn,
+      isAuthResolved,
+      segments,
+      inAuthGroup,
+      inTabsGroup
+    });
 
-  console.log('Segments:', segments);
-  console.log('Logged in?', isLoggedIn);
+    // Redirect unauthenticated users to login
+    if (!isLoggedIn && !inAuthGroup) {
+      console.log('Redirecting to login');
+      router.replace('/(auth)/login');
+      return;
+    }
 
-  const inAuthGroup = segments[0] === '(auth)';
-  const inTabsGroup = segments[0] === '(tabs)';
+    // Redirect authenticated users to home if they're on auth screens
+    if (isLoggedIn && inAuthGroup) {
+      console.log('Redirecting to home');
+      router.replace('/(tabs)');
+      return;
+    }
 
-  if (!isLoggedIn && !inAuthGroup) {
-    router.replace('/(auth)/login');
+    // Ensure authenticated users land on tabs if not already there
+    if (isLoggedIn && !inTabsGroup && !inAuthGroup) {
+      console.log('Ensuring user is on tabs');
+      router.replace('/(tabs)');
+      return;
+    }
+  }, [isAuthResolved, isLoggedIn, segments, router]);
+
+  // Show loading or nothing while auth is resolving
+  if (!isAuthResolved) {
+    return null; // or a loading screen
   }
-
-  if (isLoggedIn && !inTabsGroup) {
-    router.replace('/(tabs)');
-  }
-}, [isAuthResolved, isLoggedIn, segments]);
-
 
   return <Slot />;
+}
+
+// Main root layout with auth provider
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootNavigationGuard />
+    </AuthProvider>
+  );
 }

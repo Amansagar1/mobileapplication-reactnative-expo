@@ -130,7 +130,7 @@ export default function Reports()  {
   };
 
   return (
-    <View className="flex-1 p-4 bg-white top-12 h-screen ">
+    <View className="flex-1 p-4 bg-white pt-14 h-screen ">
       <ReportFilters
         onApply={handleSubmit}
         filters={filters}
