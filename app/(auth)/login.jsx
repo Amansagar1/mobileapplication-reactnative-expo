@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable, Button, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as SecureStore from 'expo-secure-store';
-
+import { loginApi } from '../../webServices/UCIAPIController'; 
 export default function Login() {
   const router = useRouter();
   const [userName, setUserName] = useState('');
@@ -12,26 +12,37 @@ export default function Login() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleLogin = async () => {
+
+const handleLogin = async () => {
   setError('');
+  setSuccessMessage('');
+
   if (!userName || !password) {
     setError('Please fill in all fields.');
     return;
   }
 
-if (userName === 'admin' && password === '123456') {
-  await SecureStore.setItemAsync('token', 'sample-token');
-  setSuccessMessage('Login successful!');
-  setTimeout(() => {
-    setSuccessMessage('');
-    router.replace('/(tabs)'); // Go to home screen
-  }, 1500);
-}
+  try {
+    const response = await loginApi(userName, password);
 
-  else {
-    setError('Invalid credentials. Please try again.');
+    if (response?.token) {
+      // Optional: store token securely if not already done in loginApi
+      await SecureStore.setItemAsync('token', response.token);
+
+      setSuccessMessage('Login successful!');
+      setTimeout(() => {
+        setSuccessMessage('');
+      router.replace('../(tabs)/index.jsx'); // navigate to the home/tabs screen
+      }, 1500);
+    } else {
+      setError('Login failed. Please check your credentials.');
+    }
+  } catch (err) {
+    console.error('Login error:', err);
+    setError(err.message || 'An error occurred during login.');
   }
 };
+
 
   return (
     <View className="flex-1 justify-center items-center bg-blue-100 px-6">
