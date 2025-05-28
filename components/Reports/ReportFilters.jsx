@@ -154,13 +154,13 @@ const ReportFilters = ({
       <TouchableOpacity
         onPress={handleSubmit}
         disabled={isLoading}
-        className={`bg-blue-600 rounded py-3 mt-6 items-center ${
+        className={`bg-green-600 rounded py-3 mt-6 items-center ${
           isLoading ? "opacity-50" : ""
         }`}
       >
-        <View className="flex-row items-center justify-center space-x-2">
+        <View className="flex-row items-center justify-center space-x-2 gap-2 flex">
           <Filter color="white" size={20} />
-          <Text className="text-white font-bold">Apply</Text>
+          <Text className="text-white font-bold">Excecute</Text>
         </View>
       </TouchableOpacity>
     </View>

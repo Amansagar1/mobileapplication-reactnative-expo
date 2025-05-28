@@ -138,12 +138,19 @@ const ReportDisplay = ({ responseData, filters }) => {
           Date Range: {new Date(filters.startDate).toLocaleDateString()} -{" "}
           {new Date(filters.endDate).toLocaleDateString()}
         </Text>
+              {/* Download Button */}
+      <TouchableOpacity
+        onPress={downloadCSV}
+        className="w-full bg-green-600 p-3 mt-2 rounded items-center"
+      >
+        <Text className="text-white font-bold">Download</Text>
+      </TouchableOpacity>
       </View>
 
       {/* Table */}
       <ScrollView horizontal showsHorizontalScrollIndicator>
         <View
-          className="border border-gray-300 rounded-md bg-white overflow-hidden max-h-[300px]"
+          className="border border-gray-300 rounded-md bg-white overflow-hidden max-h-[600px]"
           style={{ minWidth: COLUMN_WIDTH * desiredColumnOrder.length }}
         >
           {/* Header Row */}
@@ -160,7 +167,7 @@ const ReportDisplay = ({ responseData, filters }) => {
           </View>
 
           {/* Data Rows */}
-          <ScrollView style={{ maxHeight: 300 }}>
+          <ScrollView style={{ maxHeight: 600 }}>
             {data.map((row, idx) => (
               <View
                 key={idx}
@@ -192,13 +199,7 @@ const ReportDisplay = ({ responseData, filters }) => {
         </View>
       </ScrollView>
 
-      {/* Download Button */}
-      <TouchableOpacity
-        onPress={downloadCSV}
-        className="w-full bg-green-600 p-3 mt-2 rounded items-center"
-      >
-        <Text className="text-white font-bold">Download</Text>
-      </TouchableOpacity>
+
     </View>
   );
 };
