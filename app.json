@@ -11,7 +11,6 @@
       "web"
     ],
     "githubUrl": "",
-
     "primaryColor": "#ffffff",
     "notification": {
       "icon": "./assets/images/notification-icon.png",
@@ -32,7 +31,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.sagar_sharma.ucidashboard"
     },
     "web": {
       "bundler": "metro",
