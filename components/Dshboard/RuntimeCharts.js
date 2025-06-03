@@ -171,8 +171,8 @@ const RuntimeCharts = ({ assetNames, chartDataMap, handleNavigate, dateWindowMap
 
   return (
     <>
-      <ScrollView className="mb-4">
-        <View className="flex-row flex-wrap justify-between mx-2">
+      <ScrollView className="mb-4 w-full">
+        <View className="flex-row flex-wrap justify-between mx-2 ">
           {assetNames.map((asset) => (
              <Pressable
               key={asset}
@@ -211,7 +211,7 @@ const RuntimeCharts = ({ assetNames, chartDataMap, handleNavigate, dateWindowMap
                 <NavigationButtons asset={asset} />
               </View>
 
-              <View className="h-40 mb-2">
+              <View className="h-40 mb-2 ">
                 {chartDataMap[asset] && !isLoading(asset) ? (
                   (() => {
                     const chartData = prepareChartData(asset);

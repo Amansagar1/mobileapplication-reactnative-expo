@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 const kpiKeys = {
   "OEE Month": {
@@ -8,97 +9,113 @@ const kpiKeys = {
     gra: "grA_Monthly_OEE",
     gcs: "gcS_Monthly_OEE",
     spc: "spc_Monthly_OEE",
+    icon: "calendar-month",
+    iconColor: "#4F46E5",
+    cardBgColor: "#EEF2FF", // light indigo
   },
   "OEE Day": {
     main: "oee",
     gra: "grA_OEE",
     gcs: "gcS_OEE",
     spc: "spc_OEE",
+    icon: "calendar-today",
+    iconColor: "#10B981",
+    cardBgColor: "#ECFDF5", // light emerald
   },
   "Previous Day OEE": {
     main: "previous_OEE",
     gra: "grA_prev_OEE",
     gcs: "gcS_prev_OEE",
     spc: "spc_prev_OEE",
+    icon: "chart-line",
+    iconColor: "#F59E0B",
+    cardBgColor: "#FFFBEB", // light amber
   },
   "Availability": {
     main: "availability",
     gra: "grA_Avaialbility",
     gcs: "gcS_Avaialbility",
     spc: "spc_Avaialbility",
+    icon: "check-circle",
+    iconColor: "#3B82F6",
+    cardBgColor: "#EFF6FF", // light blue
   },
   "Quality": {
     main: "quality",
     gra: "grA_Quality",
     gcs: "gcS_Quality",
     spc: "spc_Quality",
+    icon: "medal",
+    iconColor: "#EC4899",
+    cardBgColor: "#FDF2F8", // light pink
   },
   "Performance": {
     main: "performance",
     gra: "grA_Performance",
     gcs: "gcS_Performance",
     spc: "spc_Performance",
+    icon: "speedometer",
+    iconColor: "#6366F1",
+    cardBgColor: "#EEF2FF", // soft indigo
   },
 };
 
+
 const KPICards = ({ overviewData, isLoading }) => {
   return (
-    <View className="flex-row flex-wrap justify-between mx-2 my-2">
+    <View className="flex-row flex-wrap justify-between px-3 py-2 bg-slate-50">
       {Object.keys(kpiKeys).map((label, index) => {
-        const mainValue = overviewData[kpiKeys[label]?.main];
+        const { main, gra, gcs, spc, icon, iconColor, cardBgColor } = kpiKeys[label];
+        const mainValue = overviewData[main];
+
         const isPercentage = label !== "Downtime";
         const displayValue =
           mainValue !== undefined && mainValue !== null
             ? isPercentage
-              ? `${label ? Math.round(mainValue) : mainValue} %`
+              ? `${Math.round(mainValue)}%`
               : `${mainValue}`
             : "N/A";
 
         return (
-          <TouchableOpacity
+          <Pressable
             key={index}
-            className="group relative p-2 flex-col items-center justify-center rounded-lg shadow bg-white border-l-4 border-emerald-500 h-24 w-[48%] mb-4"
-            activeOpacity={1}
+            className="relative w-[48%] mb-4 bg-white rounded-2xl px-4 py-4 shadow-sm border border-slate-200"
+             style={{ backgroundColor: cardBgColor }}
           >
-            {/* Tooltip */}
-            <View className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-black bg-opacity-80 p-3 gap-1 rounded-md shadow-md opacity-0 group-hover:opacity-100 z-50 w-64">
-              <Text className="text-white font-bold text-sm">{label}</Text>
-              <View className="h-px my-1 bg-gray-400" />
-              <View className="flex-row justify-between">
-                <Text className="text-white text-xs">
-                  <Text>GRA </Text>
-                  {overviewData[kpiKeys[label]?.gra] ?? "N/A"}
-                </Text>
-                <Text className="text-white text-xs">
-                  <Text>GCS </Text>
-                  {overviewData[kpiKeys[label]?.gcs] ?? "N/A"}
-                </Text>
-                <Text className="text-white text-xs">
-                  <Text>SPC </Text>
-                  {overviewData[kpiKeys[label]?.spc] ?? "N/A"}
-                </Text>
-              </View>
+            {/* Icon */}
+            <View
+              className="absolute top-4 right-4 w-9 h-9 rounded-xl justify-center items-center"
+              style={{ backgroundColor: `${iconColor}20` }}
+            >
+              <MaterialCommunityIcons name={icon} size={20} color={iconColor} />
             </View>
 
-            <Text className="text-gray-500 text-sm text-center">
+            {/* Label */}
+            <Text className="text-slate-500 text-[13px] font-medium">
               {isLoading ? (
-                <SkeletonPlaceholder>
-                  <SkeletonPlaceholder.Item width={100} height={20} />
+                <SkeletonPlaceholder backgroundColor="#E2E8F0">
+                  <SkeletonPlaceholder.Item width={80} height={14} />
                 </SkeletonPlaceholder>
               ) : (
                 label
               )}
             </Text>
-            <Text className="text-2xl font-bold text-gray-800 text-center mt-1">
-              {isLoading ? (
-                <SkeletonPlaceholder>
-                  <SkeletonPlaceholder.Item width={60} height={36} />
-                </SkeletonPlaceholder>
-              ) : (
-                displayValue
-              )}
-            </Text>
-          </TouchableOpacity>
+
+            {/* Value */}
+            <View className="mt-2">
+              <Text className="text-[26px] font-bold text-slate-800">
+                {isLoading ? (
+                  <SkeletonPlaceholder backgroundColor="#E2E8F0">
+                    <SkeletonPlaceholder.Item width={70} height={28} />
+                  </SkeletonPlaceholder>
+                ) : (
+                  displayValue
+                )}
+              </Text>
+
+              
+            </View>
+          </Pressable>
         );
       })}
     </View>
