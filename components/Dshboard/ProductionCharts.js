@@ -106,9 +106,6 @@ const ProductionCharts = ({
       ]
     };
 
-    // If there's a second dataset (Shift 2), we need to handle it differently
-    // react-native-chart-kit doesn't support multiple datasets in bar charts easily
-    // So we'll combine them or show them separately
     if (data.datasets.length > 1) {
       // For now, let's show both datasets combined
       const combinedData = [];
