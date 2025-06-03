@@ -305,6 +305,7 @@
 //       return handleApiError(error); 
 //     });
 // } 
+// Import dependencies
 import axios from 'axios';
 import EndPoints from './APIEndpoints';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -338,13 +339,12 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor: Handle errors (no redirect in mobile!)
+// Response interceptor: Handle errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       console.warn('Unauthorized - handle logout or token refresh here');
-      // Navigation-based redirect should be handled in the app logic
     }
     return Promise.reject(error);
   }
@@ -380,7 +380,9 @@ export const decodeToken = (token) => {
   }
 };
 
-// Login API function
+// ========== API FUNCTIONS ========== //
+
+// Login API
 export const loginApi = async (username, password) => {
   const tenantId = TENANT_ID;
 
@@ -400,10 +402,6 @@ export const loginApi = async (username, password) => {
     if (response?.data?.token) {
       await setItem('uci_token', response.data.token);
       await setItem('tenantId', tenantId);
-      // You can also decode and store user data here if needed
-
-      // Optional: fetch license info
-      // await getAllLicense();
     } else {
       throw { statusCode: 401, message: 'Login failed, invalid credentials.' };
     }
@@ -418,7 +416,7 @@ export const loginApi = async (username, password) => {
   }
 };
 
-// Added: Get report CSV function
+// Get Report CSV
 export const getReportCsv = async (
   assetName,
   parameters,
@@ -439,13 +437,12 @@ export const getReportCsv = async (
     );
 
     const response = await axiosInstance.get(url, {
-      responseType: 'text', // expect CSV as plain text
+      responseType: 'text',
       headers: {
         Accept: 'text/csv',
       },
     });
 
-    // Return CSV string
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -453,4 +450,65 @@ export const getReportCsv = async (
   }
 };
 
+// ✅ ADDED: Historical Runtime Downtime API
+export const getHisRuntimeDowntime = async (assetName, from, to, timezone) => {
+  try {
+    const url = EndPoints.GET_HISRUNTIME_DOWNTIME(
+      TENANT_ID,
+      assetName,
+      from,
+      to,
+      timezone
+    );
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// ✅ Optionally, also add getPerformanceIndex and getOverallPerformanceIndex:
+
+export const getPerformanceIndex = async (AssetName, from, to, timezone) => {
+  try {
+    const url = EndPoints.GET_PERFORMANCEINDEX(
+      TENANT_ID,
+      AssetName,
+      from,
+      to,
+      timezone
+    );
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const getOverallPerformanceIndex = async (from, to, timezone) => {
+  try {
+    const url = EndPoints.GET_OVERALL_PERFORMANCEINDEX(
+      from,
+      to,
+      timezone,
+      TENANT_ID
+    );
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+export const getHisRuntimeOkkorNotOk = async (assemblyLine, from, to) => {
+  try {
+    const url = EndPoints.GET_HISRUNTIME_OKAYORNOTOK(assemblyLine, from, to);
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Export the axios instance in case it's needed elsewhere
 export default axiosInstance;
