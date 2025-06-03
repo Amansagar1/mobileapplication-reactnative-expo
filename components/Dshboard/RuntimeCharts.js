@@ -60,13 +60,14 @@ const RuntimeCharts = ({ assetNames, chartDataMap, handleNavigate, dateWindowMap
   );
 
   const NavigationButtons = ({ asset, size = 24, showInModal = false }) => (
-    <View className={`flex flex-row gap-1 ${showInModal ? 'mb-2' : ''}`}>
+    <View className={` flex-row gap-1 ${showInModal ? 'mb-2' : ''}`}
+    style={{ minWidth: 50 }}>
       <Pressable
         onPress={() => handleAssetNavigate(asset, 1)}
         disabled={isLoading(asset)}
         className={`p-1 ${isLoading(asset) ? "opacity-50" : ""}`}
       >
-        <AntDesign name="left" size={size} color="#3B82F6" />
+   <AntDesign name="left" size={size} color="#3B82F6" />
       </Pressable>
 
       <Pressable
@@ -118,11 +119,13 @@ const RuntimeCharts = ({ assetNames, chartDataMap, handleNavigate, dateWindowMap
     return chartData;
   };
 
+
+  
   const renderTable = (asset, isModal = false) => {
     if (!chartDataMap[asset] || isLoading(asset)) {
       return (
         <View className="mt-2">
-          <Skeleton height={40} width="100%" count={3} />
+          <Skeleton height={40} width="100%" count={2} />
         </View>
       );
     }
@@ -131,15 +134,15 @@ const RuntimeCharts = ({ assetNames, chartDataMap, handleNavigate, dateWindowMap
     if (!data.datasets || !Array.isArray(data.datasets)) return null;
 
     return (
-      <ScrollView horizontal className="mt-2">
-        <View className="border border-gray-300 ">
+      <View horizontal className="mt-2 w-full ">
+        <View className="border border-gray-300  ">
           {/* Header */}
-          <View className="flex-row bg-gray-100 border-b border-gray-400">
-            <View className="w-20 border-r border-gray-400 p-1">
+          <View className="flex-row bg-gray-100 border-b border-gray-400 w-full">
+            <View className="w-12 border-r border-gray-400 p-1">
               <Text className="text-xs font-bold">Shift</Text>
             </View>
             {data?.labels?.map((label, idx) => (
-              <View key={idx} className="w-16 border-r border-gray-400 p-1 items-center">
+              <View key={idx} className="w-12 border-r border-gray-400 p-1 items-center">
                 <Text className="text-xs">{label}</Text>
               </View>
             ))}
@@ -152,26 +155,26 @@ const RuntimeCharts = ({ assetNames, chartDataMap, handleNavigate, dateWindowMap
               className="flex-row border-b border-gray-300"
               style={{ backgroundColor: dataset?.backgroundColor || (dsIdx === 0 ? '#047857' : '#34D399') }}
             >
-              <View className="w-20 border-r border-gray-400 p-1">
+              <View className="w-12 border-r border-gray-400 p-1">
                 <Text className="text-xs text-white font-bold">
                   {dataset?.label === "Shift 1" ? "1" : dataset?.label === "Shift 2" ? "2" : dataset?.label || (dsIdx + 1)}
                 </Text>
               </View>
               {(dataset?.data || []).map((val, idx) => (
-                <View key={idx} className="w-16 border-r border-gray-400 p-1 items-center">
+                <View key={idx} className="w-12 border-r border-gray-400 p-1 items-center">
                   <Text className="text-xs text-white">{typeof val === 'number' ? val.toFixed(2) : '0.00'}</Text>
                 </View>
               ))}
             </View>
           ))}
         </View>
-      </ScrollView>
+      </View>
     );
   };
 
   return (
     <>
-      <ScrollView className="mb-4 w-full">
+      <ScrollView className="mb-4 w-full flex ">
         <View className="flex-row flex-wrap justify-between mx-2 ">
           {assetNames.map((asset) => (
              <Pressable
